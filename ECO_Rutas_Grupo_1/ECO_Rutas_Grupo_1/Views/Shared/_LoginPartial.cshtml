@@ -1,0 +1,36 @@
+@using Microsoft.AspNet.Identity
+
+<div class="ecorutas-account-nav">
+    @if (Request.IsAuthenticated)
+    {
+        <span class="navbar-text ecorutas-user-name">
+            Hola, @User.Identity.GetUserName()
+        </span>
+
+        if (User.IsInRole("Administrador"))
+        {
+            <span class="badge rounded-pill ecorutas-role-badge">Administrador</span>
+        }
+        else if (User.IsInRole("Asociado"))
+        {
+            <span class="badge rounded-pill ecorutas-role-badge">Asociado</span>
+        }
+        else if (User.IsInRole("Guía"))
+        {
+            <span class="badge rounded-pill ecorutas-role-badge">Guía</span>
+        }
+
+        @Html.ActionLink("Mi cuenta", "Index", "Manage", null, new { @class = "btn btn-outline-light btn-sm" })
+
+        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "d-inline" }))
+        {
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-light btn-sm">Cerrar sesión</button>
+        }
+    }
+    else
+    {
+        @Html.ActionLink("Iniciar sesión", "Login", "Account", null, new { @class = "btn btn-outline-light btn-sm" })
+        @Html.ActionLink("Registrarse", "Register", "Account", null, new { @class = "btn btn-light btn-sm" })
+    }
+</div>

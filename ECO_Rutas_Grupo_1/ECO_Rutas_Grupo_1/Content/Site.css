@@ -1,0 +1,96 @@
+:root {
+    --eco-forest: #173f35;
+    --eco-leaf: #2f7457;
+    --eco-mist: #f3f7f4;
+    --eco-ink: #24312b;
+}
+
+html {
+    min-height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: var(--eco-ink);
+    background-color: var(--eco-mist);
+}
+
+.skip-link {
+    position: absolute;
+    top: -4rem;
+    left: 1rem;
+    z-index: 1100;
+    padding: .65rem 1rem;
+    color: #fff;
+    background: var(--eco-forest);
+    border-radius: .35rem;
+}
+
+.skip-link:focus {
+    top: .75rem;
+}
+
+.ecorutas-navbar {
+    background: var(--eco-forest);
+    box-shadow: 0 2px 12px rgb(15 40 31 / 16%);
+}
+
+.ecorutas-brand {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+
+.ecorutas-navbar .nav-link {
+    color: rgb(255 255 255 / 82%);
+}
+
+.ecorutas-navbar .nav-link:hover,
+.ecorutas-navbar .nav-link:focus {
+    color: #fff;
+}
+
+.ecorutas-account-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.ecorutas-user-name {
+    color: #fff;
+}
+
+.ecorutas-role-badge {
+    color: var(--eco-forest);
+    background-color: #d8eddf;
+}
+
+.ecorutas-main {
+    flex: 1 0 auto;
+    width: 100%;
+    padding-top: 2rem;
+    padding-bottom: 2.5rem;
+}
+
+.ecorutas-footer {
+    padding: 1rem 0;
+    color: #e6eee9;
+    background: var(--eco-forest);
+    font-size: .9rem;
+}
+
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+@media (max-width: 991.98px) {
+    .ecorutas-account-nav {
+        justify-content: flex-start;
+        padding: .75rem 0 .25rem;
+    }
+}
