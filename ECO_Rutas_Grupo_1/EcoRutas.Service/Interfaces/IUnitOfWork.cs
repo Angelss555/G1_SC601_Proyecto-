@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Data.Entity;
 using System.Threading.Tasks;
 
 namespace EcoRutas.Service.Interfaces
@@ -10,5 +11,7 @@ namespace EcoRutas.Service.Interfaces
     {
         IRepository<TEntity> Repository<TEntity>() where TEntity : class;
         Task<int> SaveChangesAsync();
+        DbContextTransaction BeginTransaction();
     }
 }
+

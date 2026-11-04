@@ -44,6 +44,11 @@ namespace EcoRutas.Repository
             return _context.SaveChangesAsync();
         }
 
+        public DbContextTransaction BeginTransaction()
+        {
+            return _context.Database.BeginTransaction();
+        }
+
         public void Dispose()
         {
             Dispose(true);

@@ -1,0 +1,27 @@
+@model EcoRutas.Service.Models.ConfirmarReservaModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Confirmar reserva - EcoRutas</title>
+</head>
+<body>
+    <main>
+        <h1>Datos de los pasajeros</h1>
+        @using (Html.BeginForm("Confirmar", "Reserva", FormMethod.Post, new { id = "confirmar-reserva" }))
+        {
+            @Html.AntiForgeryToken()
+            <div id="salidas-container"></div>
+            <button type="submit">Confirmar reserva</button>
+        }
+        <p id="mensaje" role="alert"></p>
+    </main>
+    <script>
+        window.ecoRutasConfirmar = true;
+    </script>
+    <script src="~/Scripts/carrito.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Carrito - EcoRutas</title>
+</head>
+<body>
+    <main>
+        <h1>Carrito de EcoRutas</h1>
+        <table>
+            <thead>
+                <tr><th>Salida</th><th>Pasajeros</th><th>Acciones</th></tr>
+            </thead>
+            <tbody id="carrito-items"></tbody>
+        </table>
+        <p id="carrito-vacio">El carrito está vacío.</p>
+        <a href="@Url.Action("Confirmar", "Reserva")">Continuar con la reserva</a>
+    </main>
+    <script src="~/Scripts/carrito.js"></script>
+</body>
+</html>
