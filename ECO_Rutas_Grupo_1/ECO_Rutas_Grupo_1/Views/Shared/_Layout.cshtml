@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#173f35" />
+    <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
     <title>@ViewBag.Title - EcoRutas</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
@@ -15,7 +16,9 @@
         <nav class="navbar navbar-expand-lg navbar-dark ecorutas-navbar" aria-label="Navegación principal">
             <div class="container">
                 @Html.ActionLink("EcoRutas", "Index", "Home", new { area = "" }, new { @class = "navbar-brand ecorutas-brand" })
-
+                <a class="navbar-brand ecorutas-brand" href="@Url.Action("Index", "Home")">
+                    <img src="~/Content/imagenes/tu-logo.png" alt="EcoRutas Logo" height="30" />
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navegacionPrincipal"
                         aria-controls="navegacionPrincipal" aria-expanded="false" aria-label="Mostrar u ocultar navegación">
                     <span class="navbar-toggler-icon"></span>
