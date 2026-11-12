@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Context\ApplicationDbContext.cs" />
     <Compile Include="Context\ApplicationDbSeeder.cs" />
+    <Compile Include="Context\DemoReservasSeeder.cs" />
     <Compile Include="Entities\ApplicationRoleNames.cs" />
     <Compile Include="Entities\ApplicationUser.cs" />
     <Compile Include="Entities\Categoria.cs" />

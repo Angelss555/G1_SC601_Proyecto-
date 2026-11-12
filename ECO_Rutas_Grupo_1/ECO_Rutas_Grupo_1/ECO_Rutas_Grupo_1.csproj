@@ -277,6 +277,10 @@
     <Content Include="Views\Historial\Index.cshtml" />
     <Content Include="Views\Guia\Index.cshtml" />
     <Content Include="Views\Guia\Pasajeros.cshtml" />
+    <Content Include="Views\Usuarios\_UsuarioForm.cshtml" />
+    <Content Include="Views\Usuarios\Crear.cshtml" />
+    <Content Include="Views\Usuarios\Editar.cshtml" />
+    <Content Include="Views\Usuarios\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

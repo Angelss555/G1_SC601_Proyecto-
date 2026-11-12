@@ -1,0 +1,30 @@
+﻿@model EcoRutas.Service.Models.UsuarioFormModel
+@* Persona 4 — Valeria Calvo Chaves *@
+@{
+    ViewBag.Title = "Nuevo usuario";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h1 class="h3 mb-1">Nuevo usuario</h1>
+        <p class="text-muted">Los guías y administradores solo se pueden crear desde aquí.</p>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                @using (Html.BeginForm("Crear", "Usuarios", FormMethod.Post))
+                {
+                    @Html.Partial("_UsuarioForm", Model)
+
+                    <div class="d-flex justify-content-end gap-2">
+                        @Html.ActionLink("Cancelar", "Index", null, new { @class = "btn btn-outline-secondary" })
+                        <button type="submit" class="btn btn-success">Crear usuario</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

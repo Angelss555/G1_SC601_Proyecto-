@@ -17,6 +17,7 @@
         {
             //  This method will be called after migrating to the latest version.
             ApplicationDbSeeder.SeedReferenceData(context);
+            DemoReservasSeeder.Seed(context); // Persona 4: reservas de prueba para historial y guía
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method
             //  to avoid creating duplicate seed data.
