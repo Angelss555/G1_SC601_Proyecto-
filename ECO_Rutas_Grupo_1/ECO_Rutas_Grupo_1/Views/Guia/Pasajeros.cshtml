@@ -1,0 +1,82 @@
+﻿@model EcoRutas.Service.Models.ListaPasajerosModel
+@* Persona 4 — Valeria Calvo Chaves. Lista de pasajeros de una salida (solo consulta).
+    No incluye pases de detalles cancelados. *@
+@{
+    ViewBag.Title = "Lista de pasajeros";
+    var cultura = new System.Globalization.CultureInfo("es-CR");
+    var s = Model.Salida;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">@Html.ActionLink("Mis salidas", "Index", "Guia")</li>
+        <li class="breadcrumb-item active" aria-current="page">Lista de pasajeros</li>
+    </ol>
+</nav>
+
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        <div class="d-flex flex-wrap justify-content-between gap-2">
+            <div>
+                <h1 class="h4 mb-1">@s.NombreTour</h1>
+                <p class="text-muted mb-0">
+                    @s.FechaHora.ToString("dddd dd 'de' MMMM yyyy, HH:mm", cultura) · @s.PuntoEncuentro
+                </p>
+            </div>
+            <div class="text-md-end">
+                <div class="fs-5 fw-semibold">@s.PasajerosConfirmados / @s.CupoMaximo</div>
+                <div class="small text-muted">pasajeros · @s.PorcentajeOcupacion.ToString("0.#", cultura)% de ocupación</div>
+                @if (s.ListaCerrada)
+                {
+                    <span class="badge text-bg-dark">Lista cerrada</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-striped align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Pasajero</th>
+                    <th scope="col">Identificación</th>
+                    <th scope="col">Código de pase</th>
+                    <th scope="col">Reservado por</th>
+                    <th scope="col">Asistencia</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Pasajeros.Count == 0)
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">Esta salida no tiene pasajeros con reservas vigentes.</td>
+                    </tr>
+                }
+                @{ var n = 1; }
+                @foreach (var p in Model.Pasajeros)
+                {
+                    <tr>
+                        <td>@(n++)</td>
+                        <td class="fw-semibold">@p.NombrePasajero</td>
+                        <td>@p.Identificacion</td>
+                        <td><code>@p.CodigoPase</code></td>
+                        <td class="small">@p.TitularReserva</td>
+                        <td>
+                            @if (p.Asistio)
+                            {
+                                <span class="badge text-bg-success">Asistió</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-light border">Sin registrar</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

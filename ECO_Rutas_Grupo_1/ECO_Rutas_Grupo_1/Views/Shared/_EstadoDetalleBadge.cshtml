@@ -1,0 +1,15 @@
+﻿@model int?
+@* Persona 4 — Valeria Calvo Chaves. Badge del estado de un detalle de reserva. *@
+@{
+    string texto;
+    string clase;
+    switch (Model ?? 0)
+    {
+        case 1: texto = "Confirmada"; clase = "text-bg-primary"; break;
+        case 2: texto = "Cancelada"; clase = "text-bg-secondary"; break;
+        case 3: texto = "Completada"; clase = "text-bg-success"; break;
+        case 4: texto = "No presentada"; clase = "text-bg-warning"; break;
+        default: texto = "Desconocido"; clase = "text-bg-light"; break;
+    }
+}
+<span class="badge rounded-pill @clase">@texto</span>

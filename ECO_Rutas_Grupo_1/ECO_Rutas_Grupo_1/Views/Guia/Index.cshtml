@@ -1,0 +1,101 @@
+﻿@model EcoRutas.Service.Models.SalidasGuiaModel
+@* Persona 4 — Valeria Calvo Chaves. Salidas asignadas al guía autenticado. *@
+@{
+    ViewBag.Title = "Mis salidas";
+    var cultura = new System.Globalization.CultureInfo("es-CR");
+}
+
+<div class="mb-3">
+    <h1 class="h3 mb-0">Mis salidas asignadas</h1>
+    <p class="text-muted mb-0">Consulte la ocupación de cada salida y su lista de pasajeros.</p>
+</div>
+
+@helper TablaSalidas(List<EcoRutas.Service.Models.SalidaGuiaModel> salidas, string vacio, System.Globalization.CultureInfo cultura)
+{
+    if (salidas.Count == 0)
+    {
+        <p class="text-muted px-3 py-4 mb-0">@vacio</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Fecha y hora</th>
+                        <th scope="col">Tour</th>
+                        <th scope="col" style="min-width: 12rem">Ocupación</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col" class="text-end">Pasajeros</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in salidas)
+                    {
+                        var color = s.PorcentajeOcupacion >= 90 ? "bg-danger" : (s.PorcentajeOcupacion >= 60 ? "bg-warning" : "bg-success");
+                        <tr>
+                            <td>
+                                @s.FechaHora.ToString("ddd dd/MM/yyyy HH:mm", cultura)
+                                @if (s.EsHoy)
+                                {
+                                    <span class="badge text-bg-warning ms-1">Hoy</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="fw-semibold">@s.NombreTour</div>
+                                <div class="small text-muted">@s.PuntoEncuentro</div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-between small">
+                                    <span>@s.PasajerosConfirmados / @s.CupoMaximo pasajeros</span>
+                                    <span>@s.PorcentajeOcupacion.ToString("0.#", cultura)%</span>
+                                </div>
+                                <div class="progress" role="progressbar" aria-label="Ocupación" aria-valuenow="@s.PorcentajeOcupacion.ToString("0", System.Globalization.CultureInfo.InvariantCulture)" aria-valuemin="0" aria-valuemax="100" style="height: .5rem">
+                                    <div class="progress-bar @color" style="width: @s.PorcentajeOcupacion.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                @if (!s.Activa)
+                                {
+                                    <span class="badge text-bg-secondary">Inactiva</span>
+                                }
+                                else if (s.ListaCerrada)
+                                {
+                                    <span class="badge text-bg-dark">Lista cerrada</span>
+                                }
+                                else
+                                {
+                                    <span class="badge text-bg-success">Activa</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Pasajeros", "Guia", new { id = s.SalidaId })">Ver lista</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+<ul class="nav nav-tabs" id="tabsSalidas" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="tab-proximas" data-bs-toggle="tab" data-bs-target="#panel-proximas" type="button" role="tab" aria-controls="panel-proximas" aria-selected="true">
+            Próximas <span class="badge rounded-pill text-bg-success">@Model.Proximas.Count</span>
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-pasadas" data-bs-toggle="tab" data-bs-target="#panel-pasadas" type="button" role="tab" aria-controls="panel-pasadas" aria-selected="false">
+            Pasadas <span class="badge rounded-pill text-bg-secondary">@Model.Pasadas.Count</span>
+        </button>
+    </li>
+</ul>
+<div class="tab-content card border-0 border-top-0 shadow-sm rounded-top-0">
+    <div class="tab-pane fade show active" id="panel-proximas" role="tabpanel" aria-labelledby="tab-proximas" tabindex="0">
+        @TablaSalidas(Model.Proximas, "No tiene salidas próximas asignadas.", cultura)
+    </div>
+    <div class="tab-pane fade" id="panel-pasadas" role="tabpanel" aria-labelledby="tab-pasadas" tabindex="0">
+        @TablaSalidas(Model.Pasadas, "No tiene salidas pasadas.", cultura)
+    </div>
+</div>
