@@ -167,6 +167,10 @@
       <Project>{D3F91A76-8CF0-4DC0-9379-4C46B710E035}</Project>
       <Name>EcoRutas.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EcoRutas.Service\EcoRutas.Service.csproj">
+      <Project>{c7a4862c-47b6-4e30-81be-3541abb6877b}</Project>
+      <Name>EcoRutas.Service</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Rutas.Repository\EcoRutas.Repository.csproj">
       <Project>{88D636E2-024F-4C06-AA7A-564CECB6BE15}</Project>
       <Name>EcoRutas.Repository</Name>
@@ -180,15 +184,19 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CarritoController.cs" />
+    <Compile Include="Controllers\GuiaController.cs" />
+    <Compile Include="Controllers\HistorialController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ReservasController.cs" />
+    <Compile Include="Controllers\UsuariosController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Scripts\eco-confirmacion.js" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -263,6 +271,16 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Shared\_EstadoDetalleBadge.cshtml" />
+    <Content Include="Views\Shared\_ModalConfirmacionPartial.cshtml" />
+    <Content Include="Views\Shared\ErrorOperacion.cshtml" />
+    <Content Include="Views\Historial\Index.cshtml" />
+    <Content Include="Views\Guia\Index.cshtml" />
+    <Content Include="Views\Guia\Pasajeros.cshtml" />
+    <Content Include="Views\Usuarios\_UsuarioForm.cshtml" />
+    <Content Include="Views\Usuarios\Crear.cshtml" />
+    <Content Include="Views\Usuarios\Editar.cshtml" />
+    <Content Include="Views\Usuarios\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

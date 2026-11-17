@@ -1,0 +1,28 @@
+﻿@* Persona 4 — Valeria Calvo Chaves
+    Modal de confirmación reutilizable (Bootstrap 5).
+    Uso: cualquier botón con data-bs-toggle="modal" data-bs-target="#modalConfirmacion"
+         data-accion="URL del POST" data-titulo="..." data-mensaje="..." data-boton="..." data-clase-boton="btn-danger"
+    Requiere ~/Scripts/eco-confirmacion.js *@
+<div class="modal fade" id="modalConfirmacion" tabindex="-1" aria-labelledby="modalConfirmacionTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="formConfirmacion" method="post" action="#">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="modalConfirmacionTitulo">Confirmar acción</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0" id="modalConfirmacionMensaje">¿Desea continuar?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Volver</button>
+                    <button type="submit" class="btn btn-danger" id="modalConfirmacionBoton">
+                        <span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>
+                        <span class="texto-boton">Confirmar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

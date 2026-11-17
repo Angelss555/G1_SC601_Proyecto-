@@ -57,10 +57,14 @@
       <Project>{D3F91A76-8CF0-4DC0-9379-4C46B710E035}</Project>
       <Name>EcoRutas.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EcoRutas.Service\EcoRutas.Service.csproj">
+      <Project>{c7a4862c-47b6-4e30-81be-3541abb6877b}</Project>
+      <Name>EcoRutas.Service</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EfRepository.cs" />
-    <Compile Include="EfUnitOfWork.cs" />`r`n    <Compile Include="EfUnitOfWorkFactory.cs" />
+    <Compile Include="EfUnitOfWork.cs" />
     <Compile Include="EfUnitOfWorkFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,0 +1,72 @@
+﻿@model EcoRutas.Service.Models.UsuarioFormModel
+@* Persona 4 — Valeria Calvo Chaves. Campos compartidos por Crear y Editar. *@
+
+@Html.AntiForgeryToken()
+@Html.HiddenFor(m => m.Id)
+@Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+@if (!Model.EsNuevo)
+{
+    <div class="mb-3">
+        @Html.LabelFor(m => m.CodigoUsuario, new { @class = "form-label" })
+        <input type="text" class="form-control-plaintext fw-semibold" readonly value="@Model.CodigoUsuario" />
+        @Html.HiddenFor(m => m.CodigoUsuario)
+    </div>
+}
+
+<div class="mb-3">
+    @Html.LabelFor(m => m.NombreCompleto, new { @class = "form-label" })
+    @Html.TextBoxFor(m => m.NombreCompleto, new { @class = "form-control", maxlength = "120" })
+    @Html.ValidationMessageFor(m => m.NombreCompleto, "", new { @class = "text-danger small" })
+</div>
+
+<div class="mb-3">
+    @Html.LabelFor(m => m.Email, new { @class = "form-label" })
+    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email" })
+    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+    <div class="form-text">También es el nombre de usuario para iniciar sesión.</div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        @Html.LabelFor(m => m.Rol, new { @class = "form-label" })
+        @Html.DropDownListFor(m => m.Rol, (SelectList)ViewBag.Roles, "Seleccione un rol", new { @class = "form-select" })
+        @Html.ValidationMessageFor(m => m.Rol, "", new { @class = "text-danger small" })
+    </div>
+    <div class="col-md-6 mb-3 d-flex align-items-end">
+        <div class="form-check form-switch">
+            @Html.CheckBoxFor(m => m.Activo, new { @class = "form-check-input", role = "switch" })
+            @Html.LabelFor(m => m.Activo, new { @class = "form-check-label" })
+        </div>
+    </div>
+</div>
+
+<fieldset class="border rounded p-3 mb-3">
+    <legend class="float-none w-auto px-2 fs-6 mb-0">
+        @(Model.EsNuevo ? "Contraseña" : "Restablecer contraseña (opcional)")
+    </legend>
+    @if (!Model.EsNuevo)
+    {
+        <p class="form-text mt-0">Déjela en blanco para conservar la contraseña actual.</p>
+    }
+    <div class="row">
+        <div class="col-md-6 mb-2">
+            @Html.LabelFor(m => m.Password, new { @class = "form-label" })
+            @if (Model.EsNuevo)
+            {
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control", autocomplete = "new-password", required = "required" })
+            }
+            else
+            {
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control", autocomplete = "new-password" })
+            }
+            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
+        </div>
+        <div class="col-md-6 mb-2">
+            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "form-label" })
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", autocomplete = "new-password" })
+            @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger small" })
+        </div>
+    </div>
+    <div class="form-text">Mínimo 6 caracteres, con mayúscula, minúscula, número y un símbolo.</div>
+</fieldset>
