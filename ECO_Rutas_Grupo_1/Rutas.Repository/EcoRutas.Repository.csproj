@@ -58,7 +58,7 @@
       <Name>EcoRutas.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\EcoRutas.Service\EcoRutas.Service.csproj">
-      <Project>{c7a4862c-47b6-4e30-81be-3541abb6877b}</Project>
+      <Project>{C7A4862C-47B6-4E30-81BE-3541ABB6877B}</Project>
       <Name>EcoRutas.Service</Name>
     </ProjectReference>
   </ItemGroup>

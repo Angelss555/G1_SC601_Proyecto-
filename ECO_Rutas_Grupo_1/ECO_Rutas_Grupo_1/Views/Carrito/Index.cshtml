@@ -1,0 +1,79 @@
+@model System.Collections.Generic.IList<EcoRutas.Service.Models.CarritoItem>
+@{
+    ViewBag.Title = "Mi carrito";
+}
+
+<section class="mb-4">
+    <h1>Mi carrito</h1>
+    <p class="text-muted">Revisa las salidas y la cantidad de pasajeros antes de continuar.</p>
+</section>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h2 class="h5">Agregar una salida</h2>
+        <p class="text-muted">Mientras se conecta el catálogo, puedes agregar una salida usando su número.</p>
+        @using (Html.BeginForm("Agregar", "Carrito", FormMethod.Post, new { @class = "row g-3 align-items-end" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="col-sm-5 col-md-4">
+                <label class="form-label" for="salidaId">Número de salida</label>
+                <input class="form-control" id="salidaId" name="salidaId" type="number" min="1" required />
+            </div>
+            <div class="col-sm-4 col-md-3">
+                <label class="form-label" for="cantidadPasajerosAgregar">Pasajeros</label>
+                <input class="form-control" id="cantidadPasajerosAgregar" name="cantidadPasajeros" type="number" min="1" max="6" value="1" required />
+            </div>
+            <div class="col-sm-3">
+                <button type="submit" class="btn btn-success">Agregar</button>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model == null || Model.Count == 0)
+{
+    <div class="alert alert-info" role="status">Tu carrito está vacío. Agrega una salida para comenzar.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Salida</th>
+                    <th scope="col">Pasajeros</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>Salida #@item.SalidaId</td>
+                        <td>
+                            @using (Html.BeginForm("Modificar", "Carrito", FormMethod.Post, new { @class = "d-flex gap-2 align-items-center" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("id", item.SalidaId)
+                                <input class="form-control" style="max-width: 6rem" name="cantidadPasajeros" type="number" min="1" max="6" value="@item.CantidadPasajeros" aria-label="Cantidad de pasajeros para salida @item.SalidaId" required />
+                                <button type="submit" class="btn btn-outline-success btn-sm">Actualizar</button>
+                            }
+                        </td>
+                        <td>
+                            @using (Html.BeginForm("Eliminar", "Carrito", FormMethod.Post, new { @class = "d-inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("id", item.SalidaId)
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Quitar</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-end">
+        @Html.ActionLink("Continuar con la reserva", "Confirmar", "Reservas", null, new { @class = "btn btn-success" })
+    </div>
+}

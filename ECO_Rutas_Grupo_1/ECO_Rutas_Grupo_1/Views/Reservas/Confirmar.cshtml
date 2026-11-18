@@ -1,0 +1,48 @@
+@model EcoRutas.Service.Models.ConfirmarReservaModel
+@{
+    ViewBag.Title = "Confirmar reserva";
+}
+
+<section class="mb-4">
+    <h1>Datos de los pasajeros</h1>
+    <p class="text-muted">Completa nombre e identificación de cada pasajero para confirmar la reserva.</p>
+</section>
+
+@using (Html.BeginForm("Confirmar", "Reservas", FormMethod.Post, new { @class = "needs-validation" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.UsuarioId)
+    @Html.ValidationSummary(false, "Revisa la información:", new { @class = "alert alert-danger" })
+
+    for (var i = 0; i < Model.Salidas.Count; i++)
+    {
+        <fieldset class="card shadow-sm mb-4">
+            <div class="card-body">
+                <legend class="h5">Salida #@Model.Salidas[i].SalidaId</legend>
+                @Html.HiddenFor(model => model.Salidas[i].SalidaId)
+
+                for (var j = 0; j < Model.Salidas[i].Pasajeros.Count; j++)
+                {
+                    <div class="border-top pt-3 mt-3">
+                        <h2 class="h6">Pasajero @(j + 1)</h2>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                @Html.LabelFor(model => model.Salidas[i].Pasajeros[j].NombreCompleto, "Nombre completo", new { @class = "form-label" })
+                                @Html.TextBoxFor(model => model.Salidas[i].Pasajeros[j].NombreCompleto, new { @class = "form-control", maxlength = "120", required = "required" })
+                                @Html.ValidationMessageFor(model => model.Salidas[i].Pasajeros[j].NombreCompleto, null, new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(model => model.Salidas[i].Pasajeros[j].Identificacion, "Identificación", new { @class = "form-label" })
+                                @Html.TextBoxFor(model => model.Salidas[i].Pasajeros[j].Identificacion, new { @class = "form-control", maxlength = "30", required = "required" })
+                                @Html.ValidationMessageFor(model => model.Salidas[i].Pasajeros[j].Identificacion, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </fieldset>
+    }
+
+    <button type="submit" class="btn btn-success">Confirmar reserva</button>
+    @Html.ActionLink("Volver al carrito", "Index", "Carrito", null, new { @class = "btn btn-outline-secondary ms-2" })
+}

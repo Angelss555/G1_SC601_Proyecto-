@@ -1,7 +1,18 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+@{
+    ViewBag.Title = "Inicio";
 }
 
-<main>
+<section class="bg-white rounded-3 shadow-sm p-4 p-md-5">
+    <p class="text-success fw-semibold mb-2">Turismo responsable en Costa Rica</p>
+    <h1 class="display-5 fw-bold">Explora Costa Rica con EcoRutas</h1>
+    <p class="lead mb-4">Estamos preparando experiencias para que descubras la naturaleza, sus rutas y sus paisajes.</p>
 
-</main>
+    @if (Request.IsAuthenticated && User.IsInRole("Asociado"))
+    {
+        @Html.ActionLink("Abrir mi carrito", "Index", "Carrito", null, new { @class = "btn btn-success btn-lg" })
+    }
+    else if (!Request.IsAuthenticated)
+    {
+        @Html.ActionLink("Iniciar sesion", "Login", "Account", null, new { @class = "btn btn-success btn-lg" })
+    }
+</section>

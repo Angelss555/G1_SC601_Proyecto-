@@ -16,9 +16,6 @@
         <nav class="navbar navbar-expand-lg navbar-dark ecorutas-navbar" aria-label="Navegación principal">
             <div class="container">
                 @Html.ActionLink("EcoRutas", "Index", "Home", new { area = "" }, new { @class = "navbar-brand ecorutas-brand" })
-                <a class="navbar-brand ecorutas-brand" href="@Url.Action("Index", "Home")">
-                    <img src="~/Content/imagenes/tu-logo.png" alt="EcoRutas Logo" height="30" />
-                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navegacionPrincipal"
                         aria-controls="navegacionPrincipal" aria-expanded="false" aria-label="Mostrar u ocultar navegación">
                     <span class="navbar-toggler-icon"></span>
@@ -46,6 +43,12 @@
                         {
                             <li class="nav-item">
                                 @Html.ActionLink("Mis salidas", "Index", "Guia", new { area = "" }, new { @class = "nav-link" })
+                            </li>
+                        }
+                        @if (Request.IsAuthenticated && User.IsInRole("Asociado"))
+                        {
+                            <li class="nav-item">
+                                @Html.ActionLink("Carrito", "Index", "Carrito", new { area = "" }, new { @class = "nav-link" })
                             </li>
                         }
                     </ul>
