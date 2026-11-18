@@ -1,0 +1,128 @@
+﻿
+@model EcoRutas.Data.Entities.Tour
+
+@{
+    ViewBag.Title = "Detalles del tour";
+}
+
+<h2>Detalles del tour</h2>
+
+@if (Model != null)
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3>@Model.Nombre</h3>
+        </div>
+
+        <div class="panel-body">
+            <dl class="dl-horizontal">
+                <dt>Código</dt>
+                <dd>@Model.CodigoTour</dd>
+
+                <dt>Descripción</dt>
+                <dd>@Model.Descripcion</dd>
+
+                <dt>Categoría</dt>
+                <dd>@(Model.Categoria != null ? Model.Categoria.Nombre : "Sin categoría")</dd>
+
+                <dt>Dificultad</dt>
+                <dd>@(Model.Dificultad != null ? Model.Dificultad.Nombre : "Sin dificultad")</dd>
+
+                <dt>Duración</dt>
+                <dd>@Model.DuracionMinutos minutos</dd>
+
+                <dt>Punto de encuentro</dt>
+                <dd>@Model.PuntoEncuentro</dd>
+
+                <dt>Estado</dt>
+                <dd>@(Model.EstadoId == 1 ? "Activo" : "Inactivo")</dd>
+            </dl>
+        </div>
+    </div>
+
+    <h3>Imágenes del tour</h3>
+
+    if (Model.Imagenes != null && Model.Imagenes.Any())
+    {
+        foreach (var imagen in Model.Imagenes.OrderBy(i => i.Orden))
+        {
+            <div style="display:inline-block; margin:10px;">
+                <img src="@Url.Action("Imagen", "Tours", new { id = imagen.ImagenTourId })"
+                     alt="Imagen del tour"
+                     style="width:200px; height:140px; object-fit:cover;" />
+            </div>
+        }
+    }
+    else
+    {
+        <p>Este tour todavía no tiene imágenes.</p>
+    }
+
+    <hr />
+
+    <h3>Salidas programadas</h3>
+
+    <p>
+        @Html.ActionLink(
+                 "Administrar salidas",
+                 "Index",
+                 "Salidas",
+                 new { tourId = Model.TourId },
+                 new { @class = "btn btn-primary" }
+             )
+
+        @Html.ActionLink(
+                 "Registrar nueva salida",
+                 "Create",
+                 "Salidas",
+                 new { tourId = Model.TourId },
+                 new { @class = "btn btn-success" }
+             )
+    </p>
+
+    if (Model.Salidas != null && Model.Salidas.Any())
+    {
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Fecha y hora</th>
+                    <th>Precio</th>
+                    <th>Cupo máximo</th>
+                    <th>Cupos disponibles</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var salida in Model.Salidas.OrderBy(s => s.FechaHora))
+                {
+                    <tr>
+                        <td>@salida.FechaHora.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@salida.PrecioPorPersona.ToString("C")</td>
+                        <td>@salida.CupoMaximo</td>
+                        <td>@salida.CuposDisponibles</td>
+                        <td>@(salida.EstadoId == 1 ? "Activa" : "Inactiva")</td>
+                        <td>
+                            @Html.ActionLink(
+                                     "Ver detalles",
+                                     "Details",
+                                     "Salidas",
+                                     new { id = salida.SalidaId },
+                                     new { @class = "btn btn-info btn-sm" }
+                                 )
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No hay salidas registradas para este tour.</p>
+    }
+}
+
+<p>
+    @Html.ActionLink("Volver a la lista", "Index", "Tours", null,
+            new { @class = "btn btn-default" })
+</p>

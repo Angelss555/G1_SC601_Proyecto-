@@ -26,15 +26,26 @@
                         <li class="nav-item">
                             @Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })
                         </li>
-                        @* Persona 4 Valeria Calvo: enlaces según el rol (la seguridad real está en [Authorize] y en la capa Service) *@
+                        <li class="nav-item">
+                            @Html.ActionLink("Catálogo de tours", "Index", "Catalogo", new { area = "" }, new { @class = "nav-link" })
+                        </li>
                         @if (User.IsInRole("Administrador"))
                         {
+                            <li class="nav-item">
+                                @Html.ActionLink("Tours", "Index", "Tours", new { area = "" }, new { @class = "nav-link" })
+                            </li>
+                            <li class="nav-item">
+                                @Html.ActionLink("Salidas", "Index", "Salidas", new { area = "" }, new { @class = "nav-link" })
+                            </li>
                             <li class="nav-item">
                                 @Html.ActionLink("Usuarios", "Index", "Usuarios", new { area = "" }, new { @class = "nav-link" })
                             </li>
                         }
                         @if (User.IsInRole("Asociado"))
                         {
+                            <li class="nav-item">
+                                @Html.ActionLink("Mi carrito", "Index", "Carrito", new { area = "" }, new { @class = "nav-link" })
+                            </li>
                             <li class="nav-item">
                                 @Html.ActionLink("Mis reservas", "Index", "Historial", new { area = "" }, new { @class = "nav-link" })
                             </li>
@@ -43,12 +54,6 @@
                         {
                             <li class="nav-item">
                                 @Html.ActionLink("Mis salidas", "Index", "Guia", new { area = "" }, new { @class = "nav-link" })
-                            </li>
-                        }
-                        @if (Request.IsAuthenticated && User.IsInRole("Asociado"))
-                        {
-                            <li class="nav-item">
-                                @Html.ActionLink("Carrito", "Index", "Carrito", new { area = "" }, new { @class = "nav-link" })
                             </li>
                         }
                     </ul>

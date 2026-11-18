@@ -40,7 +40,7 @@ namespace ECO_Rutas_Grupo_1.Controllers
         public async Task<ActionResult> Confirmar(ConfirmarReservaModel model)
         {
             if (model == null)
-                return new HttpStatusCodeResult(400, "Los datos de reserva no son validos.");
+                return new HttpStatusCodeResult(400, "Los datos de reserva no son válidos.");
 
             model.UsuarioId = User.Identity.GetUserId();
             ModelState.Remove("UsuarioId");
@@ -55,8 +55,8 @@ namespace ECO_Rutas_Grupo_1.Controllers
             }
 
             Session.Remove("EcoRutas.Carrito");
-            TempData["MensajeExito"] = "Reserva confirmada correctamente. Numero: " + result.ReservaId;
-            return RedirectToAction("Index", "Home");
+            TempData["MensajeExito"] = "Reserva confirmada correctamente. Número: " + result.ReservaId;
+            return RedirectToAction("Index", "Historial");
         }
     }
 }

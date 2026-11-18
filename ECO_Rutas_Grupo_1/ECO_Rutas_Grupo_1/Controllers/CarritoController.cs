@@ -1,10 +1,11 @@
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using EcoRutas.Data.Entities;
 using EcoRutas.Repository;
 using EcoRutas.Service.Models;
+using EcoRutas.Service.Services;
 
 namespace ECO_Rutas_Grupo_1.Controllers
 {
@@ -31,27 +32,24 @@ namespace ECO_Rutas_Grupo_1.Controllers
             return Json(Items, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public JsonResult Listar()
+        {
+            return Json(Items, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Agregar(int salidaId, int cantidadPasajeros)
+        public async Task<ActionResult> Agregar(int salidaId, int cantidadPasajeros)
         {
             if (salidaId <= 0 || cantidadPasajeros < 1 || cantidadPasajeros > 6)
                 return new HttpStatusCodeResult(400, "Indique una salida y entre 1 y 6 pasajeros.");
 
-            using (var unitOfWork = new EfUnitOfWork())
-            {
-                var salida = unitOfWork.Repository<Salida>().Query()
-                    .Include(salidaRecord => salidaRecord.Tour)
-                    .SingleOrDefault(salidaRecord => salidaRecord.SalidaId == salidaId);
+            var error = await new SalidaCarritoValidator(
+                () => new EfUnitOfWork()).ValidarAsync(salidaId, cantidadPasajeros);
 
-                if (salida == null || salida.EstadoId != Estado.ActivoId ||
-                    salida.Tour == null || salida.Tour.EstadoId != Estado.ActivoId ||
-                    salida.FechaHora <= System.DateTime.Now || salida.ListaCerrada)
-                    return new HttpStatusCodeResult(400, "La salida no esta disponible para agregar.");
-
-                if (salida.CuposDisponibles < cantidadPasajeros)
-                    return new HttpStatusCodeResult(400, "La salida no tiene suficientes cupos disponibles.");
-            }
+            if (error != null)
+                return new HttpStatusCodeResult(400, error);
 
             var items = Items;
             var item = items.SingleOrDefault(current => current.SalidaId == salidaId);

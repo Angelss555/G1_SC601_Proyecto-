@@ -1,0 +1,105 @@
+﻿
+@model IEnumerable<EcoRutas.Data.Entities.Salida>
+
+@{
+    ViewBag.Title = "Salidas del tour";
+}
+
+<h2>Salidas del tour</h2>
+
+<p>
+    <strong>Tour ID:</strong> @ViewBag.TourId
+</p>
+
+<p>
+    @Html.ActionLink(
+            "Volver a los tours",
+            "Index",
+            "Tours",
+            null,
+            new { @class = "btn btn-default" }
+        )
+</p>
+
+<p>
+    @Html.ActionLink(
+            "Registrar nueva salida",
+            "Create",
+            "Salidas",
+            new { tourId = ViewBag.TourId },
+            new { @class = "btn btn-primary" }
+        )
+</p>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Fecha y hora</th>
+            <th>Guía</th>
+            <th>Precio por persona</th>
+            <th>Cupo máximo</th>
+            <th>Cupos disponibles</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var salida in Model)
+            {
+                <tr>
+                    <td>@salida.FechaHora.ToString("dd/MM/yyyy HH:mm")</td>
+
+                    <td>
+                        @(salida.Guia != null
+                            ? salida.Guia.NombreCompleto
+                            : "Sin guía")
+                    </td>
+
+                    <td>@salida.PrecioPorPersona.ToString("C")</td>
+
+                    <td>@salida.CupoMaximo</td>
+
+                    <td>@salida.CuposDisponibles</td>
+
+                    <td>
+                        @if (salida.EstadoId == 1)
+                        {
+                            <span class="label label-success">Activa</span>
+                        }
+                        else
+                        {
+                            <span class="label label-default">Inactiva</span>
+                        }
+                    </td>
+
+                    <td>
+                        @Html.ActionLink(
+                                 "Detalles",
+                                 "Details",
+                                 new { id = salida.SalidaId },
+                                 new { @class = "btn btn-info btn-sm" }
+                             )
+
+                        @Html.ActionLink(
+                                 "Editar",
+                                 "Editar",
+                                 new { id = salida.SalidaId },
+                                 new { @class = "btn btn-warning btn-sm" }
+                             )
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7">
+                    No hay salidas registradas para este tour.
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,126 @@
+﻿
+@model IEnumerable<EcoRutas.Service.Models.CarritoItem>
+
+@{
+    ViewBag.Title = "Confirmar reserva";
+}
+
+<h2>Confirmar reserva</h2>
+
+<p>Ingresa los datos de cada pasajero para las salidas seleccionadas.</p>
+
+<hr />
+
+<div id="mensajeReserva"></div>
+
+@using (Html.BeginForm("Confirmar", "Reservas", FormMethod.Post, new { id = "formReserva" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div id="salidasReserva">
+        @{
+            var indiceSalida = 0;
+        }
+
+        @foreach (var item in Model)
+        {
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>Salida #@item.SalidaId</strong>
+                    <span class="pull-right">@item.CantidadPasajeros pasajero(s)</span>
+                </div>
+
+                <div class="panel-body">
+                    <input type="hidden"
+                           name="Salidas[@indiceSalida].SalidaId"
+                           value="@item.SalidaId" />
+
+                    @for (var i = 0; i < item.CantidadPasajeros; i++)
+                    {
+                        <div class="well">
+                            <h4>Pasajero @(i + 1)</h4>
+
+                            <div class="form-group">
+                                <label>Nombre completo</label>
+                                <input type="text"
+                                       name="Salidas[@indiceSalida].Pasajeros[@i].NombreCompleto"
+                                       class="form-control"
+                                       maxlength="120"
+                                       required />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Identificación</label>
+                                <input type="text"
+                                       name="Salidas[@indiceSalida].Pasajeros[@i].Identificacion"
+                                       class="form-control"
+                                       maxlength="30"
+                                       required />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            indiceSalida++;
+        }
+    </div>
+
+    <button type="submit" class="btn btn-success btn-lg">
+        Confirmar reserva
+    </button>
+
+    @Html.ActionLink("Volver al carrito", "Index", "Carrito", null,
+            new { @class = "btn btn-default" })
+}
+
+@section scripts {
+    <script>
+        document.getElementById("formReserva").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const formulario = this;
+            const mensaje = document.getElementById("mensajeReserva");
+            const boton = formulario.querySelector('button[type="submit"]');
+
+            boton.disabled = true;
+            boton.textContent = "Procesando reserva...";
+
+            try {
+                const respuesta = await fetch(formulario.action, {
+                    method: "POST",
+                    body: new URLSearchParams(new FormData(formulario))
+                });
+
+                if (!respuesta.ok) {
+                    throw new Error(await respuesta.text());
+                }
+
+                const resultado = await respuesta.json();
+
+                mensaje.className = "alert alert-success";
+                mensaje.textContent =
+                    "¡Reserva confirmada correctamente! Número de reserva: " +
+                    resultado.reservaId;
+
+                formulario.style.display = "none";
+
+                const enlace = document.createElement("a");
+                enlace.href = '@Url.Action("Index", "Historial")';
+                enlace.className = "btn btn-primary";
+                enlace.textContent = "Ver mis reservas";
+
+                mensaje.appendChild(document.createElement("br"));
+                mensaje.appendChild(document.createElement("br"));
+                mensaje.appendChild(enlace);
+            }
+            catch (error) {
+                mensaje.className = "alert alert-danger";
+                mensaje.textContent = error.message;
+
+                boton.disabled = false;
+                boton.textContent = "Confirmar reserva";
+            }
+        });
+    </script>
+}

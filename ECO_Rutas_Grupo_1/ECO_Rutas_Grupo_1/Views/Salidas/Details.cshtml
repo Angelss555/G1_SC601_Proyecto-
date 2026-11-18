@@ -1,0 +1,124 @@
+﻿
+@model EcoRutas.Data.Entities.Salida
+
+@{
+    ViewBag.Title = "Detalles de la salida";
+}
+
+<h2>Detalles de la salida</h2>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Información de la salida</h4>
+    </div>
+
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>Tour</dt>
+            <dd>@(Model.Tour != null ? Model.Tour.Nombre : "No disponible")</dd>
+
+            <dt>Fecha y hora</dt>
+            <dd>@Model.FechaHora.ToString("dd/MM/yyyy HH:mm")</dd>
+
+            <dt>Guía asignado</dt>
+            <dd>@(Model.Guia != null ? Model.Guia.NombreCompleto : "Sin guía")</dd>
+
+            <dt>Precio por persona</dt>
+            <dd>@Model.PrecioPorPersona.ToString("C")</dd>
+
+            <dt>Cupo máximo</dt>
+            <dd>@Model.CupoMaximo</dd>
+
+            <dt>Cupos disponibles</dt>
+            <dd>@Model.CuposDisponibles</dd>
+
+            <dt>Estado</dt>
+            <dd>
+                @if (Model.EstadoId == 1)
+                {
+                    <span class="label label-success">Activa</span>
+                }
+                else
+                {
+                    <span class="label label-default">Inactiva</span>
+                }
+            </dd>
+
+            <dt>Lista cerrada</dt>
+            <dd>@(Model.ListaCerrada ? "Sí" : "No")</dd>
+
+            <dt>Fecha de cierre</dt>
+            <dd>
+                @(Model.FechaCierre.HasValue
+                    ? Model.FechaCierre.Value.ToString("dd/MM/yyyy HH:mm")
+                    : "No definida")
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<div class="form-group">
+
+    @Html.ActionLink(
+            "Editar salida",
+            "Editar",
+            new { id = Model.SalidaId },
+            new { @class = "btn btn-warning" }
+        )
+
+    @using (Html.BeginForm("CambiarEstado", "Salidas", FormMethod.Post,
+        new { style = "display:inline;", onsubmit = "return confirm('¿Está seguro de cambiar el estado de esta salida?');" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("salidaId", Model.SalidaId)
+
+        if (Model.EstadoId == 1)
+        {
+            @Html.Hidden("activar", "false")
+
+            <button type="submit" class="btn btn-default">
+                Inactivar salida
+            </button>
+        }
+        else
+        {
+            @Html.Hidden("activar", "true")
+
+            <button type="submit" class="btn btn-success">
+                Activar salida
+            </button>
+        }
+    }
+
+    @Html.ActionLink(
+            "Volver al listado",
+            "Index",
+            new { tourId = Model.TourId },
+            new { @class = "btn btn-info" }
+        )
+
+    @using (Html.BeginForm("Eliminar", "Salidas", FormMethod.Post,
+        new { onsubmit = "return confirm('¿Está seguro de que desea eliminar esta salida? Esta acción no se puede deshacer.');", style = "display:inline;" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("id", Model.SalidaId)
+
+        <button type="submit" class="btn btn-danger">
+            Eliminar salida
+        </button>
+    }
+</div>
