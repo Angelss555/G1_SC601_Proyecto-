@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,7 +9,7 @@ namespace EcoRutas.Service.Models
         [Required]
         public string UsuarioId { get; set; }
 
-        [Required, MinLength(1)]
+        [Required]
         public IList<ConfirmarSalidaModel> Salidas { get; set; }
     }
 
@@ -16,7 +17,7 @@ namespace EcoRutas.Service.Models
     {
         public int SalidaId { get; set; }
 
-        [Required, MinLength(1)]
+        [Required]
         public IList<PasajeroModel> Pasajeros { get; set; }
     }
 }

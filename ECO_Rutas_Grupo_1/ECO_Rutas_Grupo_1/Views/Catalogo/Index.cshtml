@@ -1,0 +1,115 @@
+﻿
+@model IEnumerable<EcoRutas.Data.Entities.Tour>
+
+@{
+    ViewBag.Title = "Catálogo de tours";
+}
+
+<h2>Catálogo de tours</h2>
+
+<p>Descubre nuestros tours disponibles y encuentra tu próxima aventura.</p>
+
+<hr />
+
+<h4>Filtrar tours</h4>
+
+@using (Html.BeginForm("Index", "Catalogo", FormMethod.Get))
+{
+    <div class="row">
+        <div class="col-md-4">
+            <label>Categoría</label>
+            @Html.DropDownList(
+                     "categoriaId",
+                     (SelectList)ViewBag.Categorias,
+                     "Todas las categorías",
+                     new { @class = "form-control" }
+                 )
+        </div>
+
+        <div class="col-md-4">
+            <label>Dificultad</label>
+            @Html.DropDownList(
+                     "dificultadId",
+                     (SelectList)ViewBag.Dificultades,
+                     "Todas las dificultades",
+                     new { @class = "form-control" }
+                 )
+        </div>
+
+        <div class="col-md-4" style="margin-top:25px;">
+            <button type="submit" class="btn btn-primary">
+                Filtrar
+            </button>
+
+            @Html.ActionLink(
+                     "Limpiar filtros",
+                     "Index",
+                     "Catalogo",
+                     null,
+                     new { @class = "btn btn-default" }
+                 )
+        </div>
+    </div>
+}
+
+<hr />
+
+@if (Model != null && Model.Any())
+{
+    <div class="row">
+        @foreach (var tour in Model)
+        {
+            var imagen = tour.Imagenes != null
+                ? tour.Imagenes.OrderBy(i => i.Orden).FirstOrDefault()
+                : null;
+
+            <div class="col-md-4" style="margin-bottom:25px;">
+                <div class="panel panel-default">
+                    @if (imagen != null)
+                    {
+                        <img src="@Url.Action("Imagen", "Catalogo", new { id = imagen.ImagenTourId })"
+                             alt="@tour.Nombre"
+                             style="width:100%; height:220px; object-fit:cover;" />
+                    }
+
+                    <div class="panel-body">
+                        <h3>@tour.Nombre</h3>
+
+                        <p>
+                            @(tour.Descripcion.Length > 120
+                                ? tour.Descripcion.Substring(0, 120) + "..."
+                                : tour.Descripcion)
+                        </p>
+
+                        <p>
+                            <strong>Categoría:</strong>
+                            @(tour.Categoria != null
+                                ? tour.Categoria.Nombre
+                                : "Sin categoría")
+                        </p>
+
+                        <p>
+                            <strong>Dificultad:</strong>
+                            @(tour.Dificultad != null
+                                ? tour.Dificultad.Nombre
+                                : "Sin dificultad")
+                        </p>
+
+                        @Html.ActionLink(
+                                 "Ver detalles",
+                                 "Details",
+                                 new { id = tour.TourId },
+                                 new { @class = "btn btn-primary" }
+                             )
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        No se encontraron tours disponibles con los filtros seleccionados.
+    </div>
+}

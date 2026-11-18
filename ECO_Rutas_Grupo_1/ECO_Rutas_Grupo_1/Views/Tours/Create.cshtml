@@ -1,0 +1,89 @@
+﻿@model EcoRutas.Data.Entities.Tour
+
+@{
+    ViewBag.Title = "Registrar tour";
+}
+
+<h2>Registrar nuevo tour</h2>
+
+@using (Html.BeginForm("Create", "Tours", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+    <div class="form-horizontal">
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.CodigoTour, "Código del tour")
+            @Html.TextBoxFor(m => m.CodigoTour, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.CodigoTour, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Nombre, "Nombre")
+            @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Descripcion, "Descripción")
+            @Html.TextAreaFor(m => m.Descripcion, new { @class = "form-control", rows = 4 })
+            @Html.ValidationMessageFor(m => m.Descripcion, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.CategoriaId, "Categoría")
+            @Html.DropDownListFor(m => m.CategoriaId, (SelectList)ViewBag.CategoriaId, "Seleccione una categoría", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.CategoriaId, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.DificultadId, "Dificultad")
+            @Html.DropDownListFor(m => m.DificultadId, (SelectList)ViewBag.DificultadId, "Seleccione una dificultad", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.DificultadId, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.DuracionMinutos, "Duración en minutos")
+            @Html.TextBoxFor(m => m.DuracionMinutos, new { @class = "form-control", type = "number" })
+            @Html.ValidationMessageFor(m => m.DuracionMinutos, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.PuntoEncuentro, "Punto de encuentro")
+            @Html.TextBoxFor(m => m.PuntoEncuentro, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.PuntoEncuentro, "", new { @class = "text-danger" })
+        </div>
+
+        <br />
+
+        <div class="form-group">
+            <label for="imagenes">Imágenes del tour (mínimo 3)</label>
+
+            <input type="file"
+                   name="imagenes"
+                   id="imagenes"
+                   class="form-control"
+                   accept="image/jpeg,image/png,image/gif,image/webp"
+                   multiple />
+
+            @Html.ValidationMessage("imagenes", "", new { @class = "text-danger" })
+
+            <small>Seleccione al menos 3 imágenes. Formatos permitidos: JPG, PNG, GIF y WEBP. Máximo 5 MB por imagen.</small>
+        </div>
+
+        <br />
+
+        <button type="submit" class="btn btn-primary">
+            Registrar tour
+        </button>
+
+        @Html.ActionLink("Volver", "Index", null, new { @class = "btn btn-default" })
+
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

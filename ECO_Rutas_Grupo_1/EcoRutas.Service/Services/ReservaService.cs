@@ -1,5 +1,5 @@
+
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
@@ -18,26 +18,49 @@ namespace EcoRutas.Service.Services
 
         public ReservaService(Func<IUnitOfWork> unitOfWorkFactory)
         {
-            _unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
+            _unitOfWorkFactory = unitOfWorkFactory
+                ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
         }
 
-        // Método que confirma una reserva basada en el modelo proporcionado.
         public async Task<ReservaResult> ConfirmarAsync(ConfirmarReservaModel model)
         {
-            if (model == null || string.IsNullOrWhiteSpace(model.UsuarioId) || model.Salidas == null || model.Salidas.Count == 0)
+            if (model == null ||
+                string.IsNullOrWhiteSpace(model.UsuarioId) ||
+                model.Salidas == null ||
+                model.Salidas.Count == 0)
+            {
                 return ReservaResult.BadRequest("El carrito no contiene salidas.");
+            }
 
             foreach (var item in model.Salidas)
             {
-                if (item == null || item.Pasajeros == null || item.Pasajeros.Count < 1 || item.Pasajeros.Count > 6)
-                    return ReservaResult.BadRequest("Cada salida debe tener entre 1 y 6 pasajeros.");
+                if (item == null || item.SalidaId <= 0 ||
+                    item.Pasajeros == null ||
+                    item.Pasajeros.Count < 1 ||
+                    item.Pasajeros.Count > 6)
+                {
+                    return ReservaResult.BadRequest(
+                        "Cada salida debe tener entre 1 y 6 pasajeros.");
+                }
 
-                if (item.Pasajeros.Any(p => p == null || string.IsNullOrWhiteSpace(p.NombreCompleto) || string.IsNullOrWhiteSpace(p.Identificacion)))
-                    return ReservaResult.BadRequest("Todos los pasajeros deben incluir nombre e identificación.");
+                if (item.Pasajeros.Any(p =>
+                    p == null ||
+                    string.IsNullOrWhiteSpace(p.NombreCompleto) ||
+                    string.IsNullOrWhiteSpace(p.Identificacion) ||
+                    p.NombreCompleto.Trim().Length > 120 ||
+                    p.Identificacion.Trim().Length > 30))
+                {
+                    return ReservaResult.BadRequest(
+                        "Todos los pasajeros deben incluir un nombre e identificación válidos.");
+                }
             }
 
-            if (model.Salidas.Select(s => s.SalidaId).Distinct().Count() != model.Salidas.Count)
-                return ReservaResult.BadRequest("No se puede repetir una salida en la misma reserva.");
+            if (model.Salidas.Select(s => s.SalidaId).Distinct().Count()
+                != model.Salidas.Count)
+            {
+                return ReservaResult.BadRequest(
+                    "No se puede repetir una salida en la misma reserva.");
+            }
 
             for (var intento = 1; intento <= 3; intento++)
             {
@@ -47,6 +70,7 @@ namespace EcoRutas.Service.Services
                     try
                     {
                         var ids = model.Salidas.Select(s => s.SalidaId).ToList();
+
                         var salidas = await unitOfWork.Repository<Salida>().Query()
                             .Include(s => s.Tour)
                             .Where(s => ids.Contains(s.SalidaId))
@@ -54,32 +78,57 @@ namespace EcoRutas.Service.Services
 
                         foreach (var item in model.Salidas)
                         {
-                            var salida = salidas.SingleOrDefault(s => s.SalidaId == item.SalidaId);
-                            if (salida == null || salida.EstadoId != Estado.ActivoId || salida.Tour == null || salida.Tour.EstadoId != Estado.ActivoId || salida.FechaHora <= DateTime.Now)
-                                return ReservaResult.Conflict("La salida no existe, está inactiva o ya ocurrió.");
+                            var salida = salidas.SingleOrDefault(
+                                s => s.SalidaId == item.SalidaId);
+
+                            if (salida == null ||
+                                salida.EstadoId != Estado.ActivoId ||
+                                salida.Tour == null ||
+                                salida.Tour.EstadoId != Estado.ActivoId ||
+                                salida.FechaHora <= DateTime.Now ||
+                                salida.ListaCerrada)
+                            {
+                                return ReservaResult.Conflict(
+                                    "La salida no está disponible, está inactiva o ya ocurrió.");
+                            }
 
                             if (salida.CuposDisponibles < item.Pasajeros.Count)
-                                return ReservaResult.Conflict("La salida '" + salida.Tour.Nombre + "' no tiene cupos suficientes.");
+                            {
+                                return ReservaResult.Conflict(
+                                    "La salida '" + salida.Tour.Nombre +
+                                    "' no tiene cupos suficientes.");
+                            }
                         }
 
-                        var reserva = new Reserva { UsuarioId = model.UsuarioId, FechaReserva = DateTime.Now };
+                        var reserva = new Reserva
+                        {
+                            UsuarioId = model.UsuarioId,
+                            FechaReserva = DateTime.Now
+                        };
+
                         unitOfWork.Repository<Reserva>().Add(reserva);
 
                         foreach (var item in model.Salidas)
                         {
-                            var salida = salidas.Single(s => s.SalidaId == item.SalidaId);
+                            var salida = salidas.Single(
+                                s => s.SalidaId == item.SalidaId);
+
                             salida.CuposDisponibles -= item.Pasajeros.Count;
+
                             var detalle = new DetalleReserva
                             {
                                 Salida = salida,
                                 Reserva = reserva,
-                                EstadoDetalleReservaId = EstadoDetalleReserva.ConfirmadaId,
+                                EstadoDetalleReservaId =
+                                    EstadoDetalleReserva.ConfirmadaId,
                                 CantidadPasajeros = item.Pasajeros.Count,
                                 PrecioPorPersona = salida.PrecioPorPersona
                             };
+
                             unitOfWork.Repository<DetalleReserva>().Add(detalle);
 
                             foreach (var pasajero in item.Pasajeros)
+                            {
                                 unitOfWork.Repository<Pase>().Add(new Pase
                                 {
                                     DetalleReserva = detalle,
@@ -87,22 +136,30 @@ namespace EcoRutas.Service.Services
                                     NombrePasajero = pasajero.NombreCompleto.Trim(),
                                     Identificacion = pasajero.Identificacion.Trim()
                                 });
+                            }
                         }
 
                         await unitOfWork.SaveChangesAsync();
+
                         transaction.Commit();
+
                         return ReservaResult.Success(reserva.ReservaId);
                     }
                     catch (DbUpdateConcurrencyException)
                     {
                         transaction.Rollback();
+
                         if (intento == 3)
-                            return ReservaResult.Conflict("La disponibilidad cambió. Intente nuevamente.");
+                        {
+                            return ReservaResult.Conflict(
+                                "La disponibilidad cambió. Intente nuevamente.");
+                        }
                     }
                 }
             }
 
-            return ReservaResult.Conflict("No fue posible confirmar la reserva.");
+            return ReservaResult.Conflict(
+                "No fue posible confirmar la reserva.");
         }
     }
 
@@ -114,9 +171,32 @@ namespace EcoRutas.Service.Services
         public string Message { get; private set; }
         public int ReservaId { get; private set; }
 
-        public static ReservaResult Success(int id) { return new ReservaResult { IsSuccess = true, StatusCode = 201, ReservaId = id }; }
-        public static ReservaResult BadRequest(string message) { return new ReservaResult { StatusCode = 400, Message = message }; }
-        public static ReservaResult Conflict(string message) { return new ReservaResult { StatusCode = 409, Message = message }; }
+        public static ReservaResult Success(int id)
+        {
+            return new ReservaResult
+            {
+                IsSuccess = true,
+                StatusCode = 201,
+                ReservaId = id
+            };
+        }
+
+        public static ReservaResult BadRequest(string message)
+        {
+            return new ReservaResult
+            {
+                StatusCode = 400,
+                Message = message
+            };
+        }
+
+        public static ReservaResult Conflict(string message)
+        {
+            return new ReservaResult
+            {
+                StatusCode = 409,
+                Message = message
+            };
+        }
     }
 }
-

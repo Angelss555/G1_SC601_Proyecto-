@@ -1,0 +1,189 @@
+﻿
+@{
+    ViewBag.Title = "Mi carrito";
+}
+
+<h2>Mi carrito de reservas</h2>
+
+<hr />
+
+<div id="mensajeCarrito"></div>
+
+<div id="contenidoCarrito">
+    <p>Cargando carrito...</p>
+</div>
+
+<p>
+    @Html.ActionLink(
+            "Volver al catálogo",
+            "Index",
+            "Catalogo",
+            null,
+            new { @class = "btn btn-default" }
+        )
+</p>
+
+@section scripts {
+    <script>
+        const urlCarrito = '@Url.Action("Listar", "Carrito")';
+        const urlModificar = '@Url.Action("Modificar", "Carrito")';
+        const urlEliminar = '@Url.Action("Eliminar", "Carrito")';
+        const urlReservas = '@Url.Action("Index", "Reservas")';
+
+        async function cargarCarrito() {
+            const contenedor = document.getElementById("contenidoCarrito");
+
+            try {
+                const respuesta = await fetch(urlCarrito);
+
+                if (!respuesta.ok) {
+                    throw new Error("No se pudo cargar el carrito.");
+                }
+
+                const items = await respuesta.json();
+
+                if (!items || items.length === 0) {
+                    contenedor.innerHTML =
+                        '<div class="alert alert-info">Tu carrito está vacío.</div>';
+                    return;
+                }
+
+                let html = `
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Salida</th>
+                                <th>Pasajeros</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                items.forEach(function (item) {
+                    html += `
+                        <tr>
+                            <td>Salida #${item.SalidaId}</td>
+                            <td>
+                                <input type="number"
+                                       min="1"
+                                       max="6"
+                                       value="${item.CantidadPasajeros}"
+                                       class="form-control cantidad"
+                                       style="width:90px;"
+                                       id="cantidad-${item.SalidaId}" />
+                            </td>
+                            <td>
+                                <button class="btn btn-success"
+                                        onclick="modificarItem(${item.SalidaId})">
+                                    Actualizar
+                                </button>
+
+                                <button class="btn btn-danger"
+                                        onclick="eliminarItem(${item.SalidaId})">
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                        </tbody>
+                    </table>
+
+                    <div class="text-right" style="margin-top:20px;">
+                        <a href="${urlReservas}" class="btn btn-primary btn-lg">
+                            Continuar con la reserva
+                        </a>
+                    </div>
+                `;
+
+                contenedor.innerHTML = html;
+            }
+            catch (error) {
+                contenedor.innerHTML =
+                    '<div class="alert alert-danger">' + error.message + '</div>';
+            }
+        }
+
+        async function modificarItem(salidaId) {
+            const cantidad = document.getElementById(
+                "cantidad-" + salidaId
+            ).value;
+
+            if (cantidad < 1 || cantidad > 6) {
+                mostrarMensaje(
+                    "La cantidad debe estar entre 1 y 6.",
+                    "danger"
+                );
+                return;
+            }
+
+            try {
+                const respuesta = await fetch(urlModificar, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({
+                        id: salidaId,
+                        cantidadPasajeros: cantidad
+                    })
+                });
+
+                if (!respuesta.ok) {
+                    throw new Error(await respuesta.text());
+                }
+
+                mostrarMensaje(
+                    "Cantidad actualizada correctamente.",
+                    "success"
+                );
+
+                await cargarCarrito();
+            }
+            catch (error) {
+                mostrarMensaje(error.message, "danger");
+            }
+        }
+
+        async function eliminarItem(salidaId) {
+            if (!confirm("¿Deseas eliminar esta salida del carrito?")) {
+                return;
+            }
+
+            try {
+                const respuesta = await fetch(
+                    urlEliminar + "?id=" + salidaId,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+                if (!respuesta.ok) {
+                    throw new Error(await respuesta.text());
+                }
+
+                mostrarMensaje(
+                    "Salida eliminada del carrito.",
+                    "success"
+                );
+
+                await cargarCarrito();
+            }
+            catch (error) {
+                mostrarMensaje(error.message, "danger");
+            }
+        }
+
+        function mostrarMensaje(mensaje, tipo) {
+            const elemento = document.getElementById("mensajeCarrito");
+
+            elemento.className = "alert alert-" + tipo;
+            elemento.textContent = mensaje;
+        }
+
+        cargarCarrito();
+    </script>
+}
