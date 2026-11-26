@@ -10,6 +10,8 @@ namespace EcoRutas.Data.Entities
 {
     public class ApplicationUser : IdentityUser
     {
+        public const string NombreCompletoClaimType = "EcoRutas.NombreCompleto";
+
         [Required]
         [StringLength(32)]
         public string CodigoUsuario { get; set; }
@@ -41,7 +43,12 @@ namespace EcoRutas.Data.Entities
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
-            return await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
+            var identity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
+
+            if (!string.IsNullOrWhiteSpace(NombreCompleto))
+                identity.AddClaim(new Claim(NombreCompletoClaimType, NombreCompleto.Trim()));
+
+            return identity;
         }
     }
 }
