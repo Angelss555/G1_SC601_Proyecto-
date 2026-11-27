@@ -22,6 +22,7 @@ namespace EcoRutas.Data.Context
         public DbSet<EstadoDetalleReserva> EstadosDetalleReserva { get; set; }
         public DbSet<DetalleReserva> DetallesReserva { get; set; }
         public DbSet<Pase> Pases { get; set; }
+        public DbSet<Resena> Resenas { get; set; }
 
         public static ApplicationDbContext Create()
         {
@@ -120,6 +121,20 @@ namespace EcoRutas.Data.Context
 
             modelBuilder.Entity<Pase>()
                 .HasIndex(p => p.CodigoPase)
+                .IsUnique();
+
+            modelBuilder.Entity<Resena>()
+                .HasRequired(r => r.Usuario)
+                .WithMany()
+                .HasForeignKey(r => r.UsuarioId)
+                .WillCascadeOnDelete(false);
+            modelBuilder.Entity<Resena>()
+                .HasRequired(r => r.Tour)
+                .WithMany()
+                .HasForeignKey(r => r.TourId)
+                .WillCascadeOnDelete(false);
+            modelBuilder.Entity<Resena>()
+                .HasIndex(r => new { r.UsuarioId, r.TourId })
                 .IsUnique();
             modelBuilder.Entity<Pase>()
                 .HasRequired(p => p.DetalleReserva)

@@ -45,16 +45,33 @@ namespace ECO_Rutas_Grupo_1.Controllers
             model.UsuarioId = User.Identity.GetUserId();
             ModelState.Remove("UsuarioId");
             if (!ModelState.IsValid)
+            {
+                if (Request.IsAjaxRequest())
+                {
+                    Response.StatusCode = 400;
+                    return Json(new { ok = false, mensaje = "Los datos de los pasajeros no son válidos." });
+                }
                 return View(model);
+            }
 
             var result = await new ReservaService(() => new EfUnitOfWork()).ConfirmarAsync(model);
             if (!result.IsSuccess)
             {
+                if (Request.IsAjaxRequest())
+                {
+                    Response.StatusCode = result.StatusCode;
+                    return Json(new { ok = false, mensaje = result.Message });
+                }
                 ModelState.AddModelError(string.Empty, result.Message);
                 return View(model);
             }
 
             Session.Remove("EcoRutas.Carrito");
+            if (Request.IsAjaxRequest())
+            {
+                Response.StatusCode = 201;
+                return Json(new { ok = true, reservaId = result.ReservaId });
+            }
             TempData["MensajeExito"] = "Reserva confirmada correctamente. Numero: " + result.ReservaId;
             return RedirectToAction("Index", "Home");
         }

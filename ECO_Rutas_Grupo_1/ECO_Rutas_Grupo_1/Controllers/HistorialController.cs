@@ -43,10 +43,17 @@ namespace ECO_Rutas_Grupo_1.Controllers
 
             if (resultado.Exito)
             {
+                if (Request.IsAjaxRequest())
+                    return Json(new { ok = true, mensaje = resultado.Mensaje });
                 TempData["MensajeExito"] = resultado.Mensaje;
             }
             else
             {
+                if (Request.IsAjaxRequest())
+                {
+                    Response.StatusCode = resultado.CodigoEstado;
+                    return Json(new { ok = false, mensaje = resultado.Mensaje });
+                }
                 // Mensaje distinto según el código devuelto por la capa Service.
                 switch (resultado.CodigoEstado)
                 {

@@ -80,6 +80,12 @@ namespace ECO_Rutas_Grupo_1.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    var user = await UserManager.FindByNameAsync(model.Email);
+                    if (user != null)
+                    {
+                        user.UltimaConexion = DateTime.Now;
+                        await UserManager.UpdateAsync(user);
+                    }
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
